@@ -43,7 +43,7 @@ export default function InscribirEquipo() {
         enrollmentId: `ENR-${Date.now()}`,
         teamId: 'team-001',
         tournamentId: `TOR-${torneo.id}`,
-        amount: torneo.costo,
+        amount: 50000,
       })
       console.log('[Pago] Orden creada:', data)
       if (!data.preferenceId) {
@@ -161,7 +161,7 @@ export default function InscribirEquipo() {
 
                   <PaymentBrick
                     preferenceId={paymentData.preferenceId}
-                    amount={torneo!.costo}
+                    amount={50000}
                     onSubmit={async () => {
                       setPaso(4)
                     }}
@@ -193,7 +193,7 @@ export default function InscribirEquipo() {
                         { label: 'Torneo', value: torneo?.nombre },
                         { label: 'Equipo', value: 'Sistemas FC' },
                         { label: 'Orden', value: paymentData?.paymentOrderId },
-                        { label: 'Monto', value: `$${torneo?.costo.toLocaleString()}` },
+                        { label: 'Monto', value: `$50,000` },
                         { label: 'Estado', value: 'Pago recibido' },
                       ].map((d,i) => (
                         <div key={i} className="flex items-center justify-between text-sm">

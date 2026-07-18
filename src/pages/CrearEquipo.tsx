@@ -86,24 +86,6 @@ export default function CrearEquipo() {
     }
   }
 
-  async function handleCrearEquipo() {
-    if (!torneoElegido) return
-    setCreating(true)
-    try {
-      const team = await crearEquipo(
-        user?.name || nombre,
-        nombre,
-        `${colorP},${colorS}`,
-      )
-      if (team) setCreatedTeamId(team.id)
-      navigate('/inscribir-equipo', { state: { teamId: team?.id, torneoId: torneoElegido.id } })
-    } catch {
-      navigate('/inscribir-equipo')
-    } finally {
-      setCreating(false)
-    }
-  }
-
   const preview = (
     <div className="flex items-center gap-4 p-4 rounded-xl bg-black/50 border border-border">
       <div className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-black shadow-lg" style={{ backgroundColor: colorP, color: colorS }}>
