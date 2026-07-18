@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -73,9 +73,24 @@ export default function Register() {
   const [isRegistering, setIsRegistering] = useState(false)
   const [registerError, setRegisterError] = useState<string | null>(null)
   const [pendingUserId, setPendingUserId] = useState<string | null>(null)
-  const [generatedOtp, setGeneratedOtp] = useState<string | null>(null)
+  const [generatedOtp, setGeneratedOtp] = useState<string | null>(() => {
+    const otp = String(Math.floor(100000 + Math.random() * 900000))
+    return otp
+  })
   const navigate = useNavigate()
   const { login } = useAuth()
+
+  // Auto-fill OTP inputs cuando se genera el código
+  useEffect(() => {
+    if (generatedOtp) {
+      const digits = generatedOtp.split('')
+      digits.forEach((d, i) => {
+        setTimeout(() => {
+          setOtp(prev => { const n = [...prev]; n[i] = d; return n })
+        }, i * 100)
+      })
+    }
+  }, [])
 
   const isExterno = form.userType === 'externo'
 
