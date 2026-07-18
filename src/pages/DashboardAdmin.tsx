@@ -9,6 +9,7 @@ import { InteractiveHoverButton } from '@/components/common/interactive-hover-bu
 import { Badge } from '@/components/common/badge'
 import ManchasFloating from '@/components/common/ManchasFloating'
 import { torneos, fetchTorneos } from '@/services/torneos'
+import { fetchDashboardMatches, fetchDashboardScorers, getTorneoActivo } from '@/services/dashboard'
 import { fetchEventosAuditoria } from '@/services/logistica'
 import type { AuditEvent } from '@/api/logistica'
 import SoccerField3D from '@/components/employees/SoccerField3D'
@@ -214,6 +215,36 @@ export default function DashboardAdmin() {
   }
 
   useEffect(() => { fetchTorneos() }, [])
+
+  useEffect(() => {
+    // Cargar partidos reales del API
+    fetchDashboardMatches().then(data => {
+      if (data && data.length > 0) {
+        partidosDetalle.splice(0, partidosDetalle.length, ...data.map((m, i) => ({
+          id: i + 1,
+          eq1: m.eq1, eq2: m.eq2,
+          score1: m.score1, score2: m.score2,
+          fecha: m.fecha, hora: m.hora, lugar: m.lugar,
+          estado: m.estado,
+          arbitro: '—', torneo: 'TechCup',
+          eventos: [] as MatchEvent[],
+        })))
+      }
+    })
+    // Cargar goleadores reales del API
+    fetchDashboardScorers().then(data => {
+      if (data && data.length > 0) {
+        playersStats.splice(0, playersStats.length, ...data.map((s, i) => ({
+          id: i + 1,
+          nombre: s.nombre, equipo: s.equipo,
+          emoji: '⚽', dorsal: 0,
+          posicion: '',
+          goles: s.goles, amarillas: 0, rojas: 0,
+          partidosJugados: 0, asistencias: 0,
+        })))
+      }
+    })
+  }, [])
 
   useEffect(() => {
     if (adminTab === 'logistica') {
