@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '@/components/common/Sidebar'
 import AppTopbar from '@/components/common/AppTopbar'
@@ -7,13 +7,7 @@ import ManchasFloating from '@/components/common/ManchasFloating'
 import { SpotlightCard } from '@/components/common/spotlight-card'
 import { Button } from '@/components/common/button'
 import { CalendarDays, MapPin, Clock, Shield } from 'lucide-react'
-
-const partidos = [
-  { id: 1, eq1: 'Tigres FC', eq2: 'Sistemas FC', fecha: '24 MAY', hora: '8:00 PM', cancha: 'Cancha 1', estado: 'live', torneo: 'TechCup 2024-I' },
-  { id: 2, eq1: 'Code United', eq2: 'IA Warriors', fecha: '24 MAY', hora: '9:30 PM', cancha: 'Cancha 2', estado: 'upcoming', torneo: 'TechCup 2024-I' },
-  { id: 3, eq1: 'Dragones FC', eq2: 'Los Bits', fecha: '25 MAY', hora: '5:00 PM', cancha: 'Cancha 1', estado: 'upcoming', torneo: 'TechCup 2024-I' },
-  { id: 4, eq1: 'Sistemas FC', eq2: 'Tigres FC', fecha: '18 MAY', hora: '8:00 PM', cancha: 'Cancha 1', estado: 'final', resultado: '2 - 1', torneo: 'TechCup 2024-I' },
-]
+import { partidos, fetchPartidos } from '@/services/partidos'
 
 const SIDEBAR_KEY = 'techcup_sidebar_collapsed'
 
@@ -24,6 +18,19 @@ export default function RefereeDashboard() {
     return stored ? JSON.parse(stored) : false
   })
   const navigate = useNavigate()
+
+  useEffect(() => { fetchPartidos() }, [])
+
+  const partidosAsignados = partidos.map((p, i) => ({
+    id: i + 1,
+    eq1: p.eq1, eq2: p.eq2,
+    fecha: `${p.dia} ${p.mes}`,
+    hora: p.hora,
+    cancha: p.lugar,
+    estado: p.status === 'IN_PROGRESS' ? 'live' : p.status === 'FINISHED' ? 'final' : 'upcoming',
+    torneo: 'TechCup 2026',
+    resultado: p.homeScore != null ? `${p.homeScore} - ${p.awayScore}` : undefined,
+  }))
 
   const handleCollapse = (val: boolean) => {
     setSidebarCollapsed(val)
@@ -59,7 +66,7 @@ export default function RefereeDashboard() {
           </div>
 
           {/* Partido destacado - en vivo */}
-          {partidos.filter(p => p.estado === 'live').map(p => (
+          {partidosAsignados.filter(p => p.estado === 'live').map(p => (
             <SpotlightCard key={p.id} accent="gold" className="bg-gradient-to-r from-green-900/20 to-green-800/10 border border-green-500/30 rounded-2xl p-6 mb-6">
               <div className="flex items-center justify-between max-md:flex-col gap-4">
                 <div>
@@ -86,7 +93,7 @@ export default function RefereeDashboard() {
             Mis partidos <span className="text-gold">asignados</span>
           </h3>
           <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-5 mb-10">
-            {partidos.map((p, i) => {
+            {partidosAsignados.map((p, i) => {
               const badge = badgeConfig(p.estado)
               const imgSrc = `/images/fondo-${(i % 6) + 1}.png`
               return (
