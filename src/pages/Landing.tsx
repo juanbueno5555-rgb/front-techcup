@@ -9,6 +9,7 @@ import { Badge } from '@/components/common/badge'
 import { SpotlightCard } from '@/components/common/spotlight-card'
 import { Marquee } from '@/components/common/marquee'
 import { torneos, fetchTorneos } from '@/services/torneos'
+import { partidos, fetchPartidos } from '@/services/partidos'
 
 const featureSlides = [
   { title: 'Torneos organizados', desc: 'Compite en torneos temáticos con reglas claras y justas.', color: '#FFD700', icon: Trophy },
@@ -65,7 +66,7 @@ export default function Landing() {
   const [activeTorneo, setActiveTorneo] = useState(0)
   const [torneoDir, setTorneoDir] = useState(1)
 
-  useEffect(() => { fetchTorneos() }, [])
+  useEffect(() => { fetchTorneos(); fetchPartidos() }, [])
 
   const prevTorneo = () => {
     setTorneoDir(-1)
@@ -438,14 +439,15 @@ export default function Landing() {
 
             <div className="relative z-10 overflow-hidden">
               <Marquee speed={22} pauseOnHover={true}>
-                {[
-                  { eq1:'Ing. Mecánica', eq2:'Ing. Eléctrica', score:'1 - 1', estado:"42'", color:'#3B82F6' },
-                  { eq1:'Ing. Estadística', eq2:'Ing. Sistemas', score:'0 - 0', estado:"18'", color:'#06B6D4' },
-                  { eq1:'Ing. Civil', eq2:'Ing. Química', score:'2 - 1', estado:"55'", color:'#22C55E' },
-                  { eq1:'Ing. Industrial', eq2:'Ciberseguridad', score:'0 - 3', estado:"30'", color:'#F59E0B' },
-                  { eq1:'Ing. Mecánica', eq2:'Ing. Eléctrica', score:'1 - 1', estado:"42'", color:'#3B82F6' },
-                  { eq1:'Ing. Estadística', eq2:'Ing. Sistemas', score:'0 - 0', estado:"18'", color:'#06B6D4' },
-                ].map((m, i) => (
+                {(partidos.filter(p => p.status === 'IN_PROGRESS' || p.status === 'PAUSED').length > 0
+                  ? partidos.filter(p => p.status === 'IN_PROGRESS' || p.status === 'PAUSED')
+                  : partidos.slice(0, 6)
+                ).map((m, i) => ({
+                  eq1: m.eq1, eq2: m.eq2,
+                  score: m.homeScore != null ? `${m.homeScore} - ${m.awayScore}` : 'vs',
+                  estado: m.status === 'IN_PROGRESS' ? "42'" : m.status === 'PAUSED' ? 'HT' : `${m.dia} ${m.mes}`,
+                  color: ['#3B82F6','#06B6D4','#22C55E','#F59E0B','#8B5CF6','#EC4899'][i % 6],
+                })).map((m, i) => (
                   <div key={i} className="group relative overflow-hidden rounded-2xl w-[280px] flex-shrink-0 bg-[#E8DFF5]/70 dark:bg-black/30 backdrop-blur-sm border-2 border-green-500 shadow-sm hover:shadow-[0_10px_28px_rgba(34,197,94,0.25)] hover:-translate-y-1 transition-all duration-300 p-4">
                     <div className="absolute -inset-[50%] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(245,166,35,0.06), transparent 60%)' }} />
                     <div className="flex items-center justify-center mb-2.5">
@@ -489,14 +491,15 @@ export default function Landing() {
 
             <div className="relative z-10 overflow-hidden">
               <Marquee speed={22} pauseOnHover={true}>
-                {[
-                  { eq1:'Ing. Sistemas', eq2:'Ing. Civil', score:'3 - 0', estado:'Final', color:'#8B5CF6' },
-                  { eq1:'Ing. Industrial', eq2:'Ing. Mecánica', score:'2 - 2', estado:'Final', color:'#6D28D9' },
-                  { eq1:'Ing. Eléctrica', eq2:'Ing. Química', score:'0 - 1', estado:'Final', color:'#7C3AED' },
-                  { eq1:'Ing. Sistemas', eq2:'Ing. Civil', score:'3 - 0', estado:'Final', color:'#8B5CF6' },
-                  { eq1:'Ing. Industrial', eq2:'Ing. Mecánica', score:'2 - 2', estado:'Final', color:'#6D28D9' },
-                  { eq1:'Ing. Eléctrica', eq2:'Ing. Química', score:'0 - 1', estado:'Final', color:'#7C3AED' },
-                ].map((m, i) => (
+                {(partidos.filter(p => p.status === 'FINISHED').length > 0
+                  ? partidos.filter(p => p.status === 'FINISHED')
+                  : partidos.slice(0, 6)
+                ).map((m, i) => ({
+                  eq1: m.eq1, eq2: m.eq2,
+                  score: m.homeScore != null ? `${m.homeScore} - ${m.awayScore}` : 'vs',
+                  estado: 'Final',
+                  color: ['#8B5CF6','#6D28D9','#7C3AED','#8B5CF6','#6D28D9','#7C3AED'][i % 6],
+                })).map((m, i) => (
                   <div key={i} className="group relative overflow-hidden rounded-xl w-[280px] flex-shrink-0 bg-[#E8DFF5]/70 dark:bg-black/30 backdrop-blur-sm border-2 border-red-500 shadow-sm hover:shadow-[0_10px_28px_rgba(239,68,68,0.25)] hover:-translate-y-1 transition-all duration-300 p-4">
                     <div className="absolute -inset-[50%] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(139,92,246,0.06), transparent 60%)' }} />
                     <div className="flex items-center justify-center mb-2.5">
