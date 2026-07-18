@@ -712,7 +712,7 @@ export default function DashboardAdmin() {
                         </div>
                         <div className="text-[11px] text-text-muted mt-1">🏟️ {t.categoria} 📅 {t.fecha} 👥 {t.equipos} equipos</div>
                       </div>
-                      <Button variant="outline" size="sm" className="rounded-full border-white/20 text-gray-900 dark:text-white hover:bg-white/10 text-xs h-8 px-3"><Settings size={12} className="mr-1" /> Configurar</Button>
+                      <Button variant="outline" size="sm" onClick={() => navigate(`/torneo/${t.id}`)} className="rounded-full border-white/20 text-gray-900 dark:text-white hover:bg-white/10 text-xs h-8 px-3"><Settings size={12} className="mr-1" /> Configurar</Button>
                     </div>
                   ))}
                 </div>

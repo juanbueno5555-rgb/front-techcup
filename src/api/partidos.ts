@@ -11,7 +11,8 @@ import { apiGet, apiPost } from './client'
 import type { MatchSummaryAPI, MatchDetailAPI, CreateMatchRequest, CreateMatchResponse } from './tipos'
 
 // Siempre via APIM — el client.ts ya apunta a https://techapi.azure-api.net
-const MATCHES_PATH = '/api/v1/matches'
+// Endpoint real en APIM: api/v1/Partidos
+const MATCHES_PATH = '/api/v1/Partidos'
 
 /**
  * Obtiene todos los partidos via APIM.
