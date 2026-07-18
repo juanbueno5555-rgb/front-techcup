@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Sidebar from '@/components/common/Sidebar'
 import AppTopbar from '@/components/common/AppTopbar'
@@ -7,7 +7,7 @@ import Footer from '@/components/common/Footer'
 import { SpotlightCard } from '@/components/common/spotlight-card'
 import { Badge } from '@/components/common/badge'
 import { Button } from '@/components/common/button'
-import { CalendarDays, Users, Download, ArrowLeft, Trophy } from 'lucide-react'
+import { CalendarDays, Users, Download, ArrowLeft, Trophy, Settings, Trash2, PlusCircle, Edit } from 'lucide-react'
 import { getTorneoPorId } from '@/services/torneos'
 import type { Torneo } from '@/services/torneos'
 
@@ -24,6 +24,7 @@ const equiposMock = [
 
 export default function DetalleTorneo() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [tab, setTab] = useState<Tab>('info')
   const [torneo, setTorneo] = useState<Torneo | null>(null)
@@ -126,6 +127,7 @@ export default function DetalleTorneo() {
 
           {/* Tab content */}
           {tab === 'info' && (
+            <>
             <div className="grid grid-cols-2 max-md:grid-cols-1 gap-4">
               {[
                 { label: 'Formato', value: 'Todos contra todos + Eliminatorias' },
@@ -141,6 +143,18 @@ export default function DetalleTorneo() {
                 </div>
               ))}
             </div>
+            <div className="flex items-center gap-3 mt-6 flex-wrap">
+              <Button onClick={() => navigate(`/crear-partido?torneo=${torneo.id}`)} size="sm" className="rounded-full bg-gold text-[#1A1206] hover:bg-gold-dark font-bold text-xs h-9 px-4">
+                <PlusCircle size={14} className="mr-1" /> Crear partido
+              </Button>
+              <Button variant="outline" size="sm" className="rounded-full border-white/20 text-gray-900 dark:text-white hover:bg-white/10 text-xs h-9 px-4">
+                <Edit size={14} className="mr-1" /> Editar torneo
+              </Button>
+              <Button variant="outline" size="sm" className="rounded-full border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs h-9 px-4">
+                <Trash2 size={14} className="mr-1" /> Eliminar
+              </Button>
+            </div>
+            </>
           )}
 
           {tab === 'equipos' && (
